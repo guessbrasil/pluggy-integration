@@ -115,7 +115,54 @@ def get_accounts():
     return all_accounts
 
 
-def get_transactions(account_id, start_date="2012-01-01", end_date="2019-12-31", page_size=500):
+def get_investments(item_id):
+    url = f"{PLUGGY_BASE_URL}/investments"
+    headers = {"X-API-KEY": api_key}
+    params = {"itemId": item_id}
+
+    try:
+        response = requests.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json().get("results", [])
+        logger.info(f"[{item_id}] Total de investimentos: {len(data)}")
+        return data
+    except Exception as e:
+        logger.error(f"[{item_id}] Erro ao buscar investimentos: {e}")
+        return []
+
+
+
+def get_investment_transactions(investment_id, page_size=500):
+    url = f"{PLUGGY_BASE_URL}/investments/{investment_id}/transactions"  
+    headers = {"X-API-KEY": api_key}
+    params = {"pageSize": page_size, "page": 1}
+
+    transactions = []
+
+    while True:
+        try:
+            response = requests.get(url, headers=headers, params=params)
+            response.raise_for_status()
+            data = response.json()
+            results = data.get("results", [])
+            if not results:
+                break
+
+            transactions.extend(results)
+            if len(results) < page_size:
+                break
+
+            params["page"] += 1
+        except Exception as e:
+            logger.error(f"[{investment_id}] Erro ao buscar transações de investimento: {e}")
+            break
+
+    logger.info(f"[{investment_id}] Total de transações de investimento: {len(transactions)}")
+    return transactions
+
+
+
+def get_transactions(account_id, start_date="2012-01-01", end_date="2025-08-18", page_size=500):
     url = f"{PLUGGY_BASE_URL}/transactions"
     headers = {"X-API-KEY": api_key}
     params = {
@@ -149,7 +196,7 @@ def get_transactions(account_id, start_date="2012-01-01", end_date="2019-12-31",
     logger.info(f"AccountID: {account_id}. Total de transações: {len(transactions)}.")
     return format_transactions(transactions, account_id)
 
-# Formata transações
+
 def format_transactions(transactions, account_id):
     formatted = []
 

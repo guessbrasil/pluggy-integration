@@ -55,3 +55,46 @@ UPDATE_TRANSACTION = """
 """
 
 
+# INVESTMENTS
+# --- INVESTIMENTOS ---
+SELECT_INVESTMENTS = """
+    SELECT investment_id, item_id, name, balance, type, subtype, date
+    FROM pluggy_investments
+"""
+INSERT_INVESTMENT = """
+    INSERT INTO pluggy_investments (
+        investment_id, item_id, number, name, balance, currency_code, type, subtype,
+        last_month_rate, last_twelve_months_rate, annual_rate, code, isin, metadata,
+        value, quantity, amount, taxes, taxes2, date, owner, amount_profit, amount_withdrawal,
+        amount_original, due_date, issuer, issuer_cnpj, issue_date, rate, rate_type,
+        fixed_annual_rate, status, institution, created_at, updated_at
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+"""
+UPDATE_INVESTMENT = """
+    UPDATE pluggy_investments
+    SET number = ?, name = ?, balance = ?, currency_code = ?, type = ?, subtype = ?,
+        last_month_rate = ?, last_twelve_months_rate = ?, annual_rate = ?, code = ?, isin = ?, metadata = ?,
+        value = ?, quantity = ?, amount = ?, taxes = ?, taxes2 = ?, date = ?, owner = ?, amount_profit = ?,
+        amount_withdrawal = ?, amount_original = ?, due_date = ?, issuer = ?, issuer_cnpj = ?, issue_date = ?,
+        rate = ?, rate_type = ?, fixed_annual_rate = ?, status = ?, institution = ?, updated_at = ?, created_at = ?
+    WHERE investment_id = ?
+"""
+
+# --- TRANSACOES DE INVESTIMENTOS ---
+SELECT_INVESTMENT_TRANSACTIONS = """
+    SELECT transaction_id, investment_id, amount, date
+    FROM pluggy_investment_transactions
+"""
+INSERT_INVESTMENT_TRANSACTION = """
+    INSERT INTO pluggy_investment_transactions (
+        transaction_id, investment_id, amount, description, value, quantity, trade_date, date,
+        type, net_amount, brokerage_number, expenses, agreed_rate, movement_type
+    ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+"""
+UPDATE_INVESTMENT_TRANSACTION = """
+    UPDATE pluggy_investment_transactions
+    SET amount = ?, description = ?, value = ?, quantity = ?, trade_date = ?, date = ?,
+        type = ?, net_amount = ?, brokerage_number = ?, expenses = ?, agreed_rate = ?, movement_type = ?,
+        updated_at = GETDATE()
+    WHERE transaction_id = ?
+"""
